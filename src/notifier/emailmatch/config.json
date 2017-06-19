@@ -1,0 +1,8 @@
+{
+	"_comments": {
+		"caesar": "caesarCSV contains the path to the CSV file that CAESAR generates containing at least a netID and an email address",
+		"canvas": "canvasCSV contains the path to Canvas's gradebook CSV file"
+	},
+	"caesarCSV": "",
+	"canvasCSV": ""
+}

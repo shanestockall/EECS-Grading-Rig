@@ -1,0 +1,129 @@
+# EECS Grading Rig Architecture Plan
+### by Shane Stockall
+
+## Requirements 
+
+General __driver program__ to take a collection of submissions, iterate through them running unit tests, collect the output, upload them to canvas, and deliver the log files from the grader to the students as feedback. 
+
+Support late submissions and extensions.
+
+Integration with MOSS
+
+A separate submission program, run by the students, that runs acceptance tests (file existence, directory structure, and specific regexs in certain files)
+
+Integrates with the Canvas API
+
+Packages cheating reports, sent to the dean - with a templated cover letter & diff checker to generate a report 
+
+
+## Modules
+
+Currently implemented in Python 2.7.13, but open to refactor for Python 3 if necessary. 
+
+* Download submissions from Canvas (investigate if possible)
+* Unit tester (basically done, just needs cleaned / commented / tested with other rigs)
+* Output -> CSV (done, just clean and comment)
+* Join results.csv with gradebook (done)
+* Log emailer (done)
+* Cheating detection with MOSS 
+* Student submission checker / submitter? 
+* Cheating report generator 
+
+### Download submissions from Canvas
+
+Canvas has a REST API, and so this module would largely just be writing an API query using either the requests or BeautifulSoup libraries to return the data from Canvas, then parse the response's JSON object for the "submissions\_download\_url" module.
+
+	  "submissions_download_url": "https://example.com/courses/:course_id/assignments/:id/submissions?zip=1"
+
+This module would also contain a config file, from which the user may enter an API Key and assignment name (so that users don't have to edit the codebase directly).
+
+### Unit Tester
+
+This module is already functional for MSBuild and MSTest, but requires some work to make it modular. 
+
+Since MSBuild and MSTest are command line interfaces, we currently call those in the codebase with some command line args via Python. This is fine, but not scalable for non .NET languages - in order to support courses like 295 and 348, we'd also like to support testing in Python. Given that Python is the only non .NET language that we're looking to support, it'd feasible to have two cases, one where we call MSBuild/MSTest for .NET languages, and one where we use Python's "unittest" framework.
+
+Similar to the submission download module, this module would have a config file, where the user specifies Python vs .NET, a path to MSBuild/MSTest, and any command-line args for MSBuild/MSTest.
+
+### Output -> CSV 
+
+I've been doing this module manually, and so writing a script to do it should be trivial. I currently have a script that parses each of the log files returned by the unit tester, finds the student's ID via regex in the file name, does some math to get the student's grade by seeing how many tests passed, and then returns, in csv format, a list of the students' IDs and grades. 
+
+Making this module functional would be a matter of making this script actually write to a csv file and adding a handler for Python's unittest framework.
+
+### Join results.csv with gradebook
+
+This is mostly done - as is, this script does a SQL style join on the csv created by the previous module on the existing gradebook. 
+
+The only action item on this module is to delete unnecessary sections in the resulting csv file, as Canvas sometimes rejects its output as is due to formatting issues. 
+
+
+### Log emailer
+
+This module is also mostly done. As is, the script finds each of the log files and emails the text within to the student whose ID is in the filename. One issue - due to recent phishing campaigns, Google has actually limited the number of emails that you can send in a particular time period via SMTP. I'll have to add a timer that sends emails until the connection is refused, then have the script sleep for 5 minutes before it tries again (IIRC the limit is around 150 emails every 5 minutes or so, but there's no real documentation since I'm sending directly via SMTP. The API has a limit of 100 per hour, and I wasn't about to wait for that in a 250-person class). 
+
+__This requires a special CSV file from CAESAR, joined with the Canvas gradebook that contains the students' Canvas IDs and email addresses__
+
+I will package a modified version of the previous module that can handle this issue (this only has to be run once). 
+
+As per usual, I'll add a config to this module for the user to add an email login, a message to send to all of the students before the log, and a subject line.
+
+### Cheating detection with MOSS and cheating report generation
+
+Ian and I have been doing this manually, but it's feasible to automate this. We've been running the MOSS script, checking the top matches manually, and reporting to the dean as necessary. It would be trivial to write a script that runs MOSS on the code, but a little more complicated to gather results from MOSS. 
+
+I propose that for now, part of our package auto-submits to MOSS and returns the MOSS URL (the place at which MOSS returns all of the results).
+
+As always, we have a config file that specifies any command line args the user might want to use. 
+
+As it stands, our stretch goal is to __auto-generate reports__ to send to the dean. After reviewing MOSS's return structure, it would be possible to use the requests library to parse the returning page's HTML, gather all of the text elements with the same non-white text color and add them to a report with line numbers attached (in the case that we have to review the original files). This is a messy solution, so if anyone has a better idea, I'd love to hear it. Moss doesn't really have a huge API, since it's a relatively small academic project. 
+
+
+Example of a MOSS result page: 
+
+![MOSS](http://i.imgur.com/eMNekq8.png "Moss Results Page")
+
+### Student submission verification
+
+Our preferred method of solving this problem would be to have a standalone executable that we package with each assignment to run acceptance tests - check directory structure, file existence, and for certain specified regular expressions. This would help minimize the number of failed builds due to non-code related issues and ensure that students are using the correct namespaces, functions, and anything else that the unit tests assume. 
+
+We want this to be a standalone executable so as not to add another level of startup complexity for students. For example, 214 requires Visual Studio 2017, which until recently was only on Windows (even now, Visual Studio 2017 for Mac doesn't have a test suite), and so if a student was on a Mac, they had to either Bootcamp or Parallels onto Windows to even take the class. Adding a Python install, Java requirement, or any other dependency would make for an additional layer of complexity that we'd rather not mess with if we don't have to.
+
+As it turns out, Racket has the ability to compile a program as a standalone exe, so it's possible that we implement this in Racket using its file system library, but if anyone has a more elegant suggestion, we've only just started looking into this idea.
+
+https://docs.racket-lang.org/raco/exe.html 
+http://docs.racket-lang.org/raco/exe-dist.html?q=raco%20exe
+https://docs.racket-lang.org/reference/Filesystem.html
+https://docs.racket-lang.org/reference/regexp.html
+
+### Late / Extension handling
+
+We'd like for the final product to be able to handle late penalties and extensions as needed, as Ian's 214 course allows for a 2-day, no questions asked extension on every assignment. 
+
+I've been handling extensions and late penalties manually, just joining my csv of students with extensions on the list of submissions and finding the late ones, adding late penalties manually. 
+
+That said, an automated version of this would entail specifying the path to the extension form results in a config file, grabbing each assignment, getting the submission timestamp from the Canvas API, and adjusting the grades csv as necessary.
+
+## User Stories
+
+A student is able to submit homework for unit testing and gets immediate feedback on whether or not their submission has the correct files, methods, and structure. 
+
+An instructor is able to determine a late policy, give extensions, and apply that policy to grades as necessary. 
+
+A TA is able to grade all currently submitted assignments using only a single batch script, from download to grade export, while getting statistics and feedback on how the class is doing.
+
+
+## To Do: 
+* ~~Modify all source files to contain & reference configs~~
+* ~~Modular class structure~~
+* Add script to download from canvas ** Waiting on API key
+* Add script to upload grades to canvas ** Waiting on API key
+* Add script to handle late / extensions 
+* ~~Add script to integrate with MOSS~~
+* Add script to handle cheating reports
+* Submission acceptance tester Racket
+* Write Documentation and more thoroughly comment code
+
+
+
+

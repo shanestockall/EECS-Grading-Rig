@@ -1,0 +1,8 @@
+{
+	"_comments": {
+		"writeF": "The path to the file you'd like to write to. The program will create the file if it doesn't exist.",
+		"assignmentN": "The name of the assignment as it appears in Canvas / the gradebook." 
+	},
+	"writeFile": "",
+	"assignmentName": ""
+}

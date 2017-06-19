@@ -1,0 +1,8 @@
+{
+	"_comments": {
+		"gradebook": "gradebookCSV contains the path to Canvas's gradebook CSV file",
+		"grades": "gradesCSV contains the csv output of parseresults.py"
+	},
+	"gradebookCSV": "",
+	"gradesCSV": ""
+}
