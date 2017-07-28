@@ -1,27 +1,41 @@
-import re
+from abc import ABCMeta, abstractmethod, abstractproperty
+import time
+import re 
 import math
 import os
 
-##############################################
-################## GLOBALS ###################
-##############################################
+class Gradebook: 
+	__metaclass__ = ABCMeta
 
-global writeFile
-global assignmentName
+	@abstractmethod
+	def RegisterGrade(sub):
+		pass
 
-##############################################
+	@abstractmethod
+	def EndOfGradingSession(sub):
+		pass
 
-def load_config():
+	def load_config():
     with open('config.json') as cfg:
         config = json.load(cfg)
         for key in config.keys():
             if key in globals():
                 globals()[key] = config[key]
 
-                
-def main():
-        load_config()
-        wFile = open(writeFile, 'w+')
+class CanvasGradebook:
+
+	global assignmentName # name of assignment (email subject line, gradebook)
+	global writeFile # file to contain grade results by ID (CSV)
+
+	def RegisterGrade(sub):
+		#upload to canvas via API
+
+	# TO DO: Don't do all at once, do by submissions
+	def EndOfGradingSession(sub):
+		parse_results()
+
+	def parse_results():
+		wFile = open(writeFile, 'w+')
         wFile.write("ID, " + assignmentName + "\n")
 
         #path of results directory
@@ -41,5 +55,4 @@ def main():
 
                                 wFile.write(student.group(0).replace("_", "") + "," + str(grade))
 
-if __name__ == '__main__':
-    main()
+
