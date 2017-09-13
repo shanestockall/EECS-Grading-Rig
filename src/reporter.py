@@ -34,6 +34,7 @@ class DefaultReporter:
 
 
 	def send_transcripts():
+                load_config()
 		emailList = []
 
 		# gather list of emails, ids from external csv files

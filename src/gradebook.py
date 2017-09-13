@@ -39,7 +39,7 @@ class CanvasGradebook:
         wFile.write("ID, " + assignmentName + "\n")
 
         #path of results directory
-        resultsDir = os.listdir("./results/")
+        resultsDir = os.listdir("../results/")
 
         #regex to search for student ids
         REGEX = '[0-9]{1,2}\/[0-9]{1,2}'

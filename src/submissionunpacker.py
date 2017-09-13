@@ -33,7 +33,7 @@ class CanvasSubmissionUnpacker(SubmissionUnpacker):
 		        	sub.zip_path = filepath
 		            path = os.path.abspath("./unzipped/").decode('utf-8').strip()
 		            sub.unzipped_path = path
-		            submissions.append(sub)
+		            self.submissions.append(sub)
 		            zip = zipfile.ZipFile(filepath.decode('utf-8').strip())
 		            zip.extractall(u"\\\\?\\" + path + "\\"+ fname.replace(".zip","").encode('utf-8').strip())
 

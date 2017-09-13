@@ -39,8 +39,7 @@ class CSharpTester(Tester):
 
 	def Test(sub):
 		load_config()
-		build = builder.CSharpBuilder()
-		builds = build.Build(sub)
+		builds = builder.Build(sub)
 		if builds:
 			testPath = msTest + ' /testcontainer:'+ dllPath + ' /detail:errormessage'
     		output =  subprocess.Popen(testPath, stdout=subprocess.PIPE, shell=True).stdout.read()
@@ -51,21 +50,6 @@ class CSharpTester(Tester):
   			return False
 
   	def ExportTests(out, name):
-                # regex to search for student ids
-                REGEX = '[0-9]{1,2}\/[0-9]{1,2}'
-                
-  		outfile = open('../results/'+name+'.txt', 'w')
+  		outfile = open('./results/'+name+'.txt', 'w')
   		outfile.write(out)
-
-  		# search for grade
-  		for line in outfile:
-                        if re.match(REGEX, line):
-                                student = re.search('_[0-9]{4,5}_',name)
-                                numerator,demoninator = re.match(REGEX,line).group(0).split("/")
-                                grade = math.ceil(100*float(numerator)/float(denominator))
-
-                                csv = open('../csv/grades.csv','w')
-                                csv.write(student + ',' + grade)
-                                csv.close()
-                                
   		outfile.close()
