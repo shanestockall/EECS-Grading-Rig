@@ -20,7 +20,7 @@ class Student:
 		self.name = None 
 		self.student_id = None
 		self.email = None
-		self.assignment_grades = []
+		self.assignment_grade = None
 		self.final_grade = None
 
 # Canvas Student Class

@@ -118,10 +118,10 @@ A TA is able to grade all currently submitted assignments using only a single ba
 * ~~Modular class structure~~
 * Add script to download from canvas ** Waiting on API key
 * Add script to upload grades to canvas ** Waiting on API key
-* Add script to handle late / extensions 
+* ~~Add script to handle late / extensions~~
 * ~~Add script to integrate with MOSS~~
 * Add script to handle cheating reports
-* Submission acceptance tester Racket
+* ~~Submission acceptance tester~~
 * Write Documentation and more thoroughly comment code
 
 

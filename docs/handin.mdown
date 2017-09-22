@@ -1,0 +1,56 @@
+# EECS Hand-in Instructions
+
+Hello! If you're reading this, that means you're in a class that is using the EECS Department's shiny new autograder. This doesn't mean a whole lot to you, the student, except a few things: 
+
+* You'll get email transcripts of all of our test output automatically. 
+* You'll have one step to do during hand-in in order to turn your files in to Canvas.
+* During hand-in, the program will check that your submission is formatted correctly, so you don't fail your assignment for something silly like a misspelled function or misplaced folder :)  
+
+Basically, you'll be running a script that does some acceptance testing, then zips your assignment for you to submit to Canvas. 
+
+This process varies depending on what operating system you're on, so I'll break it up into sections. 
+
+
+### OSX Instructions (if you're using a Mac)
+
+If you're on a machine running OSX, then right click -> Open the acceptancetest application. You'll probably get a box that says "acceptancetest" is from an unidentified developer. Hi, I'm Shane, the developer. You can select "open" and then the program should open a terminal window and execute a Python script. 
+
+In case you were wondering, this particular Python script makes sure that you have the correct files in the correct places with the correct function names. It then zips up the directory into a "submission.zip" file for you to submit to Canvas, along with a few other things to make the grading process easier. 
+
+### Windows Instructions (if you're using a PC)
+
+If you're on a PC, this is pretty easy. Just double-click on the acceptance_test.exe file. This will ensure that you have all of the correct files, that they're in the correct place (if the submission directory has multiple directories), and then zip your directory into a "submission.zip" file for you to submit to Canvas. 
+
+### Linux Instructions (if you're a strong, independent CS student who doesn't conform to the operating system binary)
+
+If you're on Linux, I'm sorry as this will be the least fun version of these instructions. 
+
+1. First you need to make sure you have Python 2.7. The most recent version of Ubuntu comes with it, but just to make sure, go to your terminal and type "python -V or python --version," whichever suits your fancy. If Python is indeed installed, skip to step 3. 
+
+2. If Python isn't installed, go to https://www.python.org/downloads/ to get it and follow the instructions to install. 
+
+3. Now, open up terminal, cd to the directory containing your homework, and then type "python acceptancetest.py"
+
+Provided nothing else went wrong, you should have a new file named "submission.zip." Go ahead and submit that. :) 
+
+
+
+### FAQ
+
+* Why are you doing this? 
+
+For some classes, students will sometimes accidentally submit zip files that don't include the correct files in the correct places. This is a way to ensure that everyone submits correctly. Additionally, this script allows us to check your code files for correct function names, among other things. This means that your code hopefully won't fail all of our tests if you accidentally misspell/misname a function :) 
+
+* I'm getting a bunch of error messages and I don't know what they mean.
+
+The script will output a few different messages: 
+
+1. 'File does not exist. Please make sure all necessary files are in the correct place.'
+
+	This means that a required file is either missing from your directory or in the wrong place. 
+
+2. string + ': not found in file ' + filename + '.'
+
+	This means that a required string is missing from a particular file.
+
+Those are the only two errors that you should be seeing. If you're getting anything else, email Shane at shanestockall2017@u.northwestern.edu because I'll need to add more error checks :) 

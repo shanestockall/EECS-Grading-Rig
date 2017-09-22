@@ -56,7 +56,7 @@ def acceptance_test():
 			file.close()
 			return True
 		except: 
-			print 'File does not exist. Please make sure all necessary files are in the correct place.'
+			print path + ': File does not exist. Please make sure all necessary files are in the correct place.'
 
 
 			return False

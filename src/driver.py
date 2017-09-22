@@ -14,12 +14,15 @@ def main():
         unpacker = su.CanvasSubmissionUnpacker()
         unpacker.Unpack("../assignments/")
         submissions = unpacker.submissions
+        builder = b.CSharpBuilder()
         tester = t.CSharpTester()
         reporter = r.DefaultReporter()
         grader = g.CanvasGradebook()
         for submission in submissions:
                 # runs tests and exports to "../results" directory
+                builder.Build(submission)
                 tester.Test(submission)
+        # using the ../results directory, sends transcripts to students
         reporter.send_transcripts()
         # right now, this outputs a .csv file to upload to Canvas
         grader.parse_results()
