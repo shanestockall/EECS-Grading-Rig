@@ -8,6 +8,9 @@ list_of_paths_and_strings = [
 ]
 
 def main():
+	abspath = os.path.abspath(__file__)
+	dname = os.path.dirname(sys.argv[0])
+	os.chdir(dname)
 	if acceptance_test():
 		make_txt_file()
 		zip_dir()
